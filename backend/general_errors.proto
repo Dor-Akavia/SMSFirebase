@@ -1,0 +1,68 @@
+//*****************************************************************************
+// COPYRIGHT (C) SolarEdge Inc. All rights reserved.
+// 
+//-----------------------------------------------------------------------------
+// Filename: error.proto
+// $Revision:: 25013             $:  Revision of last commit
+// $Author:: benjamin.b           $:  Author of last commit
+// $Date:: 6/1/2019		       +#$:  Date of last commit
+//-----------------------------------------------------------------------------
+// Desc: 
+// THIS IS A TEMPLATE FOR CREATING PROTO DEFINITION FILES
+//
+//*****************************************************************************
+
+syntax = "proto2";
+import "types.proto";
+package general_errors;
+
+//*****************************************************************************
+
+enum BadRequest {
+  ERROR_BAD_REQUEST_UNKNOWN = 0;
+  ERROR_BAD_REQUEST_FAILED_TO_DESERIALIZE_MESSAGE = 1; //Can't deserialized message
+  ERROR_BAD_REQUEST_MISSING_DATA = 2;                  //Message is missing data for this action
+  ERROR_BAD_REQUEST_INVALID_REQUEST = 3;               //Message request is invalid
+  ERROR_BAD_REQUEST_JWT_TOKEN_MISSING = 4;
+  ERROR_BAD_REQUEST_JWT_TOKEN_INVALID = 5;
+  ERROR_BAD_REQUEST_JWT_TOKEN_EXPIRED = 6;
+  ERROR_BAD_REQUEST_JWT_TOKEN_BAD_SIGNATURE = 7;
+}
+ 
+//*****************************************************************************
+
+enum Unauthorized {
+  ERROR_UNAUTHORIZED_UNKNOWN = 0;
+  ERROR_UNAUTHORIZED_CLIENT = 1;        //The client isn't permitted to do this action
+  ERROR_UNAUTHORIZED_PASSWORD = 2;
+}
+ 
+//*****************************************************************************
+
+enum Forbidden {
+  ERROR_FORBIDDEN_UNKNOWN = 0;
+  ERROR_FORBIDDEN_VALUE_OUT_OF_RANGE = 1;              //e.g. string too long, cos > 1
+  ERROR_FORBIDDEN_NEGATIVE_VALUE = 2;
+  ERROR_FORBIDDEN_MISSING_PRECONDITIONS = 3;           //e.g. set RRCR values when RRCR is disabled
+  ERROR_FORBIDDEN_MAX_LIMIT_REACHED = 4;
+  ERROR_FORBIDDEN_ALREADY_IN_PROGRESS = 5;
+  ERROR_FORBIDDEN_JWT_WRONG_ROLETYPE = 6;
+}
+
+//*****************************************************************************
+
+enum InternalError {
+  ERROR_INTERNAL_UNKNOWN = 0;    
+  ERROR_INTERNAL_IPC_COMM = 1;             //Inner server communication failure
+  ERROR_INTERNAL_FAILED_TO_SERIALIZE_RESPONSE = 2;    //Can't serialize response message
+  ERROR_INTERNAL_INSUFFICIENT_STORAGE_PARTITION_DATA = 3;
+  ERROR_INTERNAL_INSUFFICIENT_STORAGE_PARTITION_ROOTFS = 4;
+  ERROR_INTERNAL_INSUFFICIENT_MEMORY = 5;
+  ERROR_INTERNAL_DSP1_COMM = 6;
+  ERROR_INTERNAL_DSP2_COMM = 7;
+  ERROR_INTERNAL_BATTERY_COMM = 8;
+  ERROR_INTERNAL_METER_COMM = 9;
+  ERROR_INTERNAL_SLAVE_COMM = 10;
+}
+
+

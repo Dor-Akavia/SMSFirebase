@@ -1,0 +1,4 @@
+types.String.value                       max_size:64
+types.Bytes.value                        max_size:64
+types.MapStringToString.key              max_size:64
+types.MapStringToString.value            max_size:64

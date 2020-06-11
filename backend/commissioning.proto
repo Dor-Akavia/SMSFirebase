@@ -1,0 +1,202 @@
+// 
+//-----------------------------------------------------------------------------
+// Filename: commissioning.proto
+// $Revision:: 26055             $:  Revision of last commit
+// $Author:: yuval.g             $:  Author of last commit
+// $Date:: 2017-12-18 20:09:01 +#$:  Date of last commit
+//-----------------------------------------------------------------------------
+// Desc: 
+// ProtoBuf messages used for Commissioning 
+//
+//***************************************************************************** 
+syntax = "proto2";
+import "general_types.proto";
+import "monitoring_details.proto";
+package commissioning;
+
+//*****************************************************************************
+
+enum FileType {
+  PORTIA = 0; //Need to change to reserved 
+  DSP1 = 1; //Need to change to reserved 
+  DSP2 = 2; //Need to change to reserved 
+  ACTIVATION = 3;
+  CONFIGURATION = 4;
+  FW_UPGRADE = 5;  
+  UNKNOWN = 6;
+}
+
+//*****************************************************************************
+
+message Status {
+  enum FileStatus {
+    none = 0;
+    uploaded = 1;
+    processing = 2;
+    error = 3;
+    done = 4;
+  }
+
+  enum ErrorType {
+    NONE = 0;
+    ERR_HASH_VERIFICATION = 1;
+    ERR_FILE_SIGNATURE = 2;
+    ERR_HASH_MISSING = 3;
+    ERR_HASH_WRONG_SN = 4;
+    ERR_INSUFFICIENT_STORAGE = 5;
+    ERR_OTHER = 6;
+    ERR_TARGET_TYPE = 7;
+    ERR_WRONG_PN = 8;
+  }
+
+  enum UpgradeStatus {
+    idle = 0;
+    upgrading = 1;
+    upgrade_error = 2;
+  }
+
+  message FileState {
+    optional FileType file_type = 1;
+    optional uint32 retry = 2; 
+    optional FileStatus file_status = 3;
+    optional uint32 execution_progress = 4; // 0% - 100%
+    optional ErrorType error_type = 5;
+    optional general_types.ControllerType controller_type = 6; // valid only if file_type is FW_UPGRADE
+    optional general_types.Battery batteries = 7;
+  }
+  
+  map<string, FileState> file_state = 1;
+  optional string serial_number = 2;
+  optional UpgradeStatus upgrade_status = 3;
+  optional uint32 total_time = 4;
+  optional uint32 total_progress = 5;
+}
+
+//*****************************************************************************
+
+message DeviceIdentity {
+  optional bool is_activated = 1;
+  optional general_types.ProductFamily product_family = 2;
+  optional general_types.ProductType product_type = 3;
+  repeated general_types.Controller controllers = 4;
+  repeated general_types.Battery batteries = 5;
+  optional string serial_number = 6;
+  optional string home_url = 7;                     // commissioning base
+  optional string status_url = 8;                   // commissioning sub url - status
+  optional string view_only_url = 9;                // view only base
+  optional string myse_base_url = 10;               // mysolaredge base 
+  optional string myse_status_sub_url = 11;         // mysolaredge sub url - status
+  optional string myse_communication_sub_url = 12;  // mysolaredge sub url - communication
+  optional string myse_evsa_setup_sub_url = 13;     // mysolaredge sub url - evsa onboarding
+  optional string monitoring_only_base_url = 14;    // monitoring only base 
+  optional bool is_ready = 15;
+  optional string myse_monitoring_sub_url = 16;     // mysolaredge sub url - monitoring
+}
+
+//*****************************************************************************
+
+message Description {
+  message ActivationMetadata {
+    optional bytes spff_hash = 1; // From QR Code
+    optional string pn = 2; // From QR Code
+  }
+  
+  optional uint32 files_count = 1;
+  optional ActivationMetadata activation_metadata = 2;
+}
+
+//*****************************************************************************
+
+message ErrorResponse {
+  enum ErrorCode {
+    UNDEFINED = 0;
+    AUTHENTICATION_ERROR = 1;
+    COMMUNICATION_ERROR = 2;
+    INTERNAL_ERROR = 3;
+    INVALID_FILE = 4;
+  }
+
+  optional ErrorCode error_code = 1;   
+  optional string description = 2;
+}
+
+//*****************************************************************************
+// Redundant commands below - need to remove after aligning to 
+// new Commissioning Mobile App interface!!!
+//*****************************************************************************
+
+message Activation {
+    optional bytes spff = 1; // SPFF with ActivationData from SE-Server
+    optional bytes spff_hash = 2; // From QR Code
+    optional string pn = 3; // From QR Code
+}
+
+//*****************************************************************************
+
+message IsReady {
+  optional uint32 progress = 1; // 0% - 100%
+  optional bool ready = 2;
+}
+
+//*****************************************************************************
+
+message Communication {
+  enum ConnectionType {
+    LAN = 0;
+    WIFI = 1;
+    WIFI_GATEWAY = 2;
+    CELLULAR = 3;
+    RS485_1_SLAVE = 4;
+    RS485_2_SLAVE = 5;
+    ZIGBEE_SLAVE = 6;
+  }
+
+  message Lan {
+    optional bool dhcp = 1;
+  } 
+
+  message Wifi {
+    enum WifiSignalStrength {
+      NONE = 0;
+      LOW = 1;//< -80 dBm
+      MID = 2;//> -80 dBm
+      HIGH = 3;//> -67 dBm
+      EXCELLENT = 4;//> -50 dbm
+    }
+
+    optional string ssid = 1;
+    optional WifiSignalStrength signal_strength = 2;
+  }
+
+  message Cellular{
+    enum CellSignalStrength {
+      NONE = 0;
+      LOWEST = 1;
+      LOW = 2;
+      MEDIUM = 3;
+      HIGH = 4;
+      HIGHEST = 5;
+      UNKNOWN = 6;
+    }
+
+    optional string operator = 1;
+    optional CellSignalStrength signal_strength = 2;
+  }
+
+  optional bool s_ok = 1;
+  optional bool internet_connection = 2;
+  optional general_types.DateTime last_connection = 3;
+  optional uint32 reconnect_timeout = 4;
+  optional ConnectionType connection_type = 5;
+  optional Lan lan = 6;
+  optional Wifi wifi = 7;
+  optional Cellular cellular = 8;
+}
+
+message Cert {
+  optional string content = 1; 
+}
+
+message ApiMonitoringDetails{
+  optional monitoring_details_package.ApiMonitoringDetailsBase monitoring_details = 1;
+}

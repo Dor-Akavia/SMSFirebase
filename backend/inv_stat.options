@@ -1,0 +1,4 @@
+# inv_stat.options
+
+inv_stat.STATMSG.controllers   max_count:9
+inv_stat.STATMSG.batteries     max_count:4
