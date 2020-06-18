@@ -75,13 +75,13 @@ function readDB (actionType,statusBuffer,identityBuffer) {
   if (actionType === 'statusResponse') {
     setTimeout(() => {
       server.responseAssert(actionType,statusBuffer);
-    }, 4000);
+    }, 2000);
   }
 
   if (actionType === 'identityResponse') {
     setTimeout(() => {
       server.responseAssert(actionType,identityBuffer);
-    }, 4000);
+    }, 2000);
   }
 };
 
@@ -89,7 +89,6 @@ function readDB (actionType,statusBuffer,identityBuffer) {
 
  exports.readDB = readDB
  exports.writeDB = writeDB
-
 
  //Proto///////////////////////////////////////////////////
 
@@ -137,8 +136,7 @@ function readDB (actionType,statusBuffer,identityBuffer) {
               objects: true,
               oneofs: true
           })
-          console.log(statusObject) 
-
+          console.log(statusObject)
       }
 
       function protoIdentity(callback) {

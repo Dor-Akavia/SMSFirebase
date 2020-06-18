@@ -26,21 +26,37 @@ var software =  { major: 4, minor: 7, build: 1408 };
 var controllers = [];
 
 
-for (let index = 0; index < 3; index++) {
+buildControllers(software);
+function buildControllers(software) {
+    for (let index = 0; index < 3; index++) {
     
-    controllers[index] = {
-        controllerType:index,
-        swType:3584,
-        version:software,
-        serialNumber: status.serialNumber + '53',
-        connected: false
+        controllers[index] = {
+            controllerType:index,
+            swType:3584,
+            version:software,
+            serialNumber: status.serialNumber + '53',
+            connected: false
+        };
     };
-};
+}
+
+
 
 identity.controllers = controllers
 
 var actionType = 'launch';
 var manualInput = false;
+
+
+var fileStateDebug = {
+    fileType: 3,
+    retry: 0,
+    fileStatus: 2,
+    executionProgress: 0,
+    errorType: 0,
+    controllerType: 0
+  }
+
 
 
 
@@ -51,6 +67,8 @@ exports.status = status;
 exports.identity = identity;
 exports.actionType = actionType;
 exports.manualInput = manualInput;
+exports.buildControllers = buildControllers;
+exports.fileStateDebug = fileStateDebug;
 
 
 
