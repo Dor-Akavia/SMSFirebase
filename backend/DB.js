@@ -179,6 +179,7 @@ function readDB (actionType,statusBuffer,identityBuffer) {
 }
 
 exports.proto = proto
+exports.writeDB = writeDB
 
 
 
