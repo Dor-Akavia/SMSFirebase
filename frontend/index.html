@@ -1,34 +1,230 @@
 <html>
 
-<head>
-    <title>Mock Server</title>
-    <link rel="shortcut icon" type="image/png" href="https://monitoringbeta.solaredge.com/solaredge-web/common/img/logos/favicon.png" />
-</head>
+    <head>
+        <title>Mock Server</title>
+        <link rel="stylesheet" href="style.css">
+        <link rel="shortcut icon" type="image/png" href="https://monitoringbeta.solaredge.com/solaredge-web/common/img/logos/favicon.png" />
+    </head>
 
 
-<body class="myBody">
+        <div class="myImage">
+            <img src="https://www.solaredge.com/themes/solaredge_2018/img/SolarEdge_logo_footer.svg" height="80" style="margin-top: 20px; margin-left: 5px;">
+        </div>
+
+    <body class="myBody">
 
 
-    <script>
-        packageType = 'status';
+        <div class="main">
+            <div class="flowType">
+                <p>Device actions:</p>
+                <img src="https://www.solaredge.com/sites/default/files/inline-images/edge_0.png" style="margin-top: -20px; width: 130px; height: 5px;"><br>
+                <div class="avilableFlows">
+                    
+                </div>
+            </div>
     
-        function trigger(params) {
-            buildPackage(packageType);
+            <div class="controllers">
+                <p>Avilable controllers:</p>
+                <img src="https://www.solaredge.com/sites/default/files/inline-images/edge_0.png" style="margin-top: -20px; width: 170px; height: 5px;"><br>
+            </div>
+        </div>
+
+        <div class="myButton">
+            <button onclick="trigger()">Submit</button>
+        </div>
+
+        <script src="../backend/buildHome.js"></script>
+
+        <script>
+            var choosenFlows = [];    
+            var choosenControllers = [];  
+            var runType = 'normal'  
+
+            function trigger(params) {
+                assertManualController(runType);
+            }       
+
+            function assertManualController(runType) {
+                var trueCounter = 0
+
+                if (runType === 'normal') {
+                    choosenFlows = [
+                        {name:Activation.id, selected:Activation.checked, value:Activation.value},
+                        {name:FW_Upgrade.id, selected:FW_Upgrade.checked, value:FW_Upgrade.value}
+                    ];
+                    console.log(choosenFlows);
+                    
+                   
+
+                    for (let index = 0; index < avilableControllers.length; index++) {
+                    var name = avilableControllers[index].name
+                    var element = document.getElementById(name);
+                    var test = element.checked
+                    choosenControllers[index] = {value:test,id:avilableControllers[index].id, name:avilableControllers[index].name}  
+
+                    if (test === true) {
+                        trueCounter ++ 
+                    }
+                    };   
+                    validation(trueCounter);               
+                };
+
+                if (runType === 'counterError') {
+                    for (let index = 0; index < avilableControllers.length; index++) {
+                        var name = avilableControllers[index].name
+                        var element = document.getElementById(name);
+                        var test = element.checked
+                        element.checked = false;
+                    }
+
+                    for (let index = 0; index < choosenFlows.length; index++) {
+                        var flowName = choosenFlows[index].name;
+                        var flowElement = document.getElementById(flowName);
+                        flowElement.checked = false;
+                    }
+                };
+
+                
+            };  
+
+            var trueFlowCounter = 0
+            var controllers = [];
+            var fileState = []
+            var innerCounter = 0
+
+          
+            function validation(trueCounter) {
+
+                for (let index = 0; index < avilableControllers.length; index++) {
+
+                    if (choosenControllers[index].value === true && trueCounter <= 3) {
+                            controllers[innerCounter] = choosenControllers[index].id;
+                            innerCounter ++                        
+                    }
+
+                    
+
+                    if (trueCounter > 3) {
+                        alert("Please choose only 3 controllers.")
+                        runType = 'counterError'
+                        assertManualController(runType);
+                        runType = 'normal'
+                        trueCounter = 0;
+                        return;
+                    }
+
+                }
+
+                innerCounter = 0
+
+                for (let index = 0; index < choosenFlows.length; index++) {  
+
+                    if (choosenFlows[index].selected === false) {
+                        trueFlowCounter ++                           
+                    }  
+
+                    if (choosenFlows[index].selected === true) {                        
+                        fileState[innerCounter] = choosenFlows[index].value;  
+                        trueFlowCounter = 0
+                        innerCounter ++                           
+                    }  
+                }
+
+                innerCounter = 0
+                
+                if (trueFlowCounter < 2) {
+                    console.log('ok');
+                }   
+
+                if (trueFlowCounter === 2) {
+                    alert("Please choose at least 1 flow.")
+                    runType = 'counterError'
+                    trueFlowCounter = 1;
+                    assertManualController(runType);
+                    runType = 'normal'
+                    return; 
+                };  
+               
+                buildQueryString(controllers,fileState);              
+            };
+
+            function buildQueryString(controllers,fileState) {
+                var controllersQueryString = []
+                var controllersObject = [];
+
+                var fileStateQueryString = []
+                var fileStateObject = [];
+
+                for (let index = 0; index < fileState.length; index++) {
+                      var fileStateString = 'fileState' + index;
+                      var fileStateValue = fileState[index]
+                      fileStateObject[index] = {url:('&' + fileStateString + '=' + fileStateValue)}
+                      fileStateObject[index] = fileStateObject[index].url 
+                }
+
+                for (let index = 0; index < fileState.length; index++) {
+                        
+                    if (fileState.length === 1) {
+                        fileStateQueryString = fileStateObject[index]
+                    }
+
+                    if (fileState.length > 1) {
+                        fileStateQueryString = fileStateQueryString + fileStateObject[index]
+                    }
+
+                }
+
+
+
+
+
+
+                for (let index = 0; index < controllers.length; index++) {
+                    var controllerName = "controller" + index
+                    var paramName = '&' + controllerName + '=';
+                    var paramValue = controllers[index]
+                    controllersObject[index] = {paramName:paramName,paramValue:paramValue};
+                }
+
+                for (let index = 0; index < controllers.length; index++) {
+                    var controllersConnectedString = (controllersObject[index].paramName + controllersObject[index].paramValue )
+                    controllersQueryString[index] = controllersConnectedString 
+                }
+
+                for (let index = 0; index < controllersQueryString.length; index++) {
+
+                    if (index === 0) {
+                        var controllersURLQuery = controllersQueryString[index]  
+                    };
+
+                    if (index > 0) {
+                        controllersURLQuery = controllersURLQuery + controllersQueryString[index]  
+                    };
+                }
+
+                // console.log(controllersURLQuery);
+                manualSend(controllersURLQuery,fileStateQueryString);
+            }
 
             
-        }
-        
-    </script>
-        
+            var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+
+            function manualSend(controllersURLQuery,fileStateQueryString) {
+                console.log('Manual send started!');
+                var url = 'http://' + 'localhost' + ':8080/mobile/commissioning/v1/manual' + '?' + controllersURLQuery + fileStateQueryString
+                console.log(url);
+                
+                  
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", url, true);
+                xhr.send();
+                console.log('Manual send finished!');
+            }
+
+            
+        </script>
 
 
-    <div class="myButton">
-        <button onclick="trigger()">Submit</button>
-    </div>
-
-
-
-
-</body>
+    </body>
 
 </html>

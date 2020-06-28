@@ -1,3 +1,6 @@
+var DBScript = require('./DB')
+
+
 var status = []
 status.fileState = {};
 status.serialNumber= '500FF004';
@@ -9,38 +12,56 @@ var identity = []
 identity.controllers ={};
 identity.batteries= {};
 identity.isActivated= false;
-identity.isReady=false;
+identity.isReady= true;
 identity.myseBaseUrl = '/';
-identity.myseStatusSubUrl = '/#/commissioning/status';
+identity.statusUrl = '/#/commissioning/status';
 identity.viewOnlyUrl =  '/mode/view_only';
+identity.serialNumber = '500FF004-53'
 
-var manulFilestate = {};
-manulFilestate.fileType = 3;
-manulFilestate.retry = 0;
-manulFilestate.fileStatus = 1;
-manulFilestate.errorType = 0;
-manulFilestate.controllerType = 0;
-manulFilestate.batteries = null;
+
 
 var software =  { major: 4, minor: 7, build: 1408 };
+var controller_type = [0,1,2]
 var controllers = [];
+var ControllerConnected = true;
 
 
-for (let index = 0; index < 3; index++) {
+buildControllers(software,controller_type,ControllerConnected);
+function buildControllers(software, controller_type,ControllerConnected) {
+    for (let index = 0; index < controller_type.length; index++) {
     
-    controllers[index] = {
-        controllerType:index,
-        swType:3584,
-        version:software,
-        serialNumber: status.serialNumber + '53',
-        connected: false
-    };
-};
+        controllers[index] =  {
+            controllerType:controller_type[index],
+            swType:3584,
+            version:software,
+            serialNumber: '',
+            connected: ControllerConnected
 
-identity.controllers = controllers
+        };
+        
+    };
+    identity.controllers = controllers
+    
+}
+
+
+
 
 var actionType = 'launch';
 var manualInput = false;
+
+
+var fileState = {0:{
+    fileType: 3,
+    retry: 0,
+    fileStatus: 2,
+    executionProgress: 0,
+    errorType: 0,
+    controllerType: 0
+    }
+};
+
+
 
 
 
@@ -51,6 +72,11 @@ exports.status = status;
 exports.identity = identity;
 exports.actionType = actionType;
 exports.manualInput = manualInput;
+exports.buildControllers = buildControllers;
+exports.fileState = fileState;
+exports.controller_type = controller_type;
+exports.software = software;
+exports.ControllerConnected = ControllerConnected;
 
 
 
