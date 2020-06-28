@@ -12,32 +12,36 @@ var identity = []
 identity.controllers ={};
 identity.batteries= {};
 identity.isActivated= false;
-identity.isReady=false;
+identity.isReady= true;
 identity.myseBaseUrl = '/';
-identity.myseStatusSubUrl = '/#/commissioning/status';
+identity.statusUrl = '/#/commissioning/status';
 identity.viewOnlyUrl =  '/mode/view_only';
+identity.serialNumber = '500FF004-53'
 
 
 
 var software =  { major: 4, minor: 7, build: 1408 };
 var controller_type = [0,1,2]
 var controllers = [];
+var ControllerConnected = true;
 
 
-buildControllers(software,controller_type);
-function buildControllers(software, controller_type) {
+buildControllers(software,controller_type,ControllerConnected);
+function buildControllers(software, controller_type,ControllerConnected) {
     for (let index = 0; index < controller_type.length; index++) {
     
-        controllers[index] = {
+        controllers[index] =  {
             controllerType:controller_type[index],
             swType:3584,
             version:software,
-            serialNumber: status.serialNumber + '53',
-            connected: false
-        };
-    };
+            serialNumber: '',
+            connected: ControllerConnected
 
+        };
+        
+    };
     identity.controllers = controllers
+    
 }
 
 
@@ -72,6 +76,7 @@ exports.buildControllers = buildControllers;
 exports.fileState = fileState;
 exports.controller_type = controller_type;
 exports.software = software;
+exports.ControllerConnected = ControllerConnected;
 
 
 

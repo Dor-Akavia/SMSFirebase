@@ -1,6 +1,8 @@
 var dataScript = require('./data')
 var server = require('./server')
 
+var commissioningPath = './protoFiles/'
+
 var status = dataScript.status;
 var identity = dataScript.identity;
 var actionType = dataScript.actionType;
@@ -75,13 +77,13 @@ function readDB (actionType,statusBuffer,identityBuffer) {
   if (actionType === 'statusResponse') {
     setTimeout(() => {
       server.responseAssert(actionType,statusBuffer);
-    }, 2000);
+    }, 1000);
   }
 
   if (actionType === 'identityResponse') {
     setTimeout(() => {
       server.responseAssert(actionType,identityBuffer);
-    }, 2000);
+    }, 1000);
   }
 };
 
@@ -101,7 +103,7 @@ function readDB (actionType,statusBuffer,identityBuffer) {
   var statusBuffer = []
   var identityBuffer = []
 
-  var myDoc = protobuf.load('commissioning.proto', function (err, root) {
+  var myDoc = protobuf.load(commissioningPath + 'commissioning.proto', function (err, root) {
       if (err) throw err
 
       if (actionType === 'writeStatus' || actionType === 'readStatus') {
@@ -160,7 +162,8 @@ function readDB (actionType,statusBuffer,identityBuffer) {
               objects: true,
               oneofs: true
           })
-          console.log(identityObject)            
+          console.log(identityObject) 
+                     
       } 
       
       if (actionType === 'writeStatus' || actionType === 'readStatus') {

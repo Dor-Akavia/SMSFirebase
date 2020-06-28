@@ -5,6 +5,7 @@ var DBScript = require('./DB')
 var dataScript = require('./data')
 const { read } = require('fs')
 const { log } = require('console')
+const { connected } = require('process')
 
 
 var urlObj = [] // refactor this into an object
@@ -28,7 +29,7 @@ var isExecuting = false;
 var software = dataScript.software;
 var fileState = dataScript.fileState;
 var controller_type = dataScript.controller_type;
-var software = dataScript.software;
+var ControllerConnected = dataScript.ControllerConnected;
 
 // *************************
 
@@ -50,10 +51,18 @@ function launchServer (data) {
       var myURL = url.parse(req.url)
       uploadURL = myURL.pathname.includes('file')
       pathData = myURL.pathname
+
+      var uploadTest = myURL.pathname.includes('file')
+
+     
+
+
+      console.log(myURL.pathname);
+      
       
       if (pathData !== urlObj[0] && pathData !== urlObj[1] && // create an array of strings
           pathData !== urlObj[2] && pathData !== urlObj[3] &&
-          pathData !== urlObj[4] && pathData !== urlObj[7]){ // 404
+          pathData !== urlObj[4] && pathData !== urlObj[7] && uploadTest === false){ // 404
           res.writeHead(404, { 'Content-Type': 'application/json' })
           res.write('404 Not Found\n')
           console.log('404');   
@@ -72,7 +81,7 @@ function launchServer (data) {
               var value = statusCallBack
               console.log('*********************');
               resolve(value);            
-              }, 3000);
+              }, 2000);
   
               if (value === undefined) {
                   reject("callback is not defined");
@@ -95,7 +104,7 @@ function launchServer (data) {
             var value = statusCallBack
             console.log('*********************');
             resolve(value);            
-            }, 3000);
+            }, 2000);
 
             if (value === undefined) {
                 reject("callback is not defined");
@@ -123,7 +132,7 @@ function launchServer (data) {
           var value = identityCallBack
           console.log('*********************');
           resolve(value);            
-          }, 3000);
+          }, 2000);
 
           if (value === undefined) {
               reject("callback is not defined");
@@ -140,14 +149,15 @@ function launchServer (data) {
       };
   
       if (pathData === urlObj[2]) { // prepare
-      console.log('prepare URL');   
+      console.log('prepare URL');  
+      res.writeHead(200, { 'Content-Type': 'application/json' }) 
       res.end()
 
       };
       
 
       if (pathData === urlObj[3]) { // execute
-      console.log('execute URL');
+      console.log('------- execute URL has been initiated -----------');
       isExecuting = true;
       res.end()
      };
@@ -194,10 +204,11 @@ function launchServer (data) {
                 if (filtered[index].Id === 1) {
 
                   if (both === false) {
-                    fileState[0].fileType = filtered[index].value
+                    fileState[0].fileType = filtered[index].value                   
                   }
 
                   if (both === true) {
+                       
                       var tempFileState = {
                         fileType:filtered[index].value ,
                         retry: 0,
@@ -216,6 +227,7 @@ function launchServer (data) {
 
                 if (filtered[index].Id === 2) {
                   controller_type.splice(0,0,filtered[index].value) 
+                  
                 }
                 if (filtered[index].Id === 3) {
                   controller_type.splice(1,0,filtered[index].value) 
@@ -229,7 +241,7 @@ function launchServer (data) {
               
           }
           status.fileState = fileState
-          dataScript.buildControllers(software,controller_type);
+          dataScript.buildControllers(software,controller_type,ControllerConnected);
           actionType = 'launch'
           DBScript.writeDB(actionType,status,identity)    
           
@@ -239,8 +251,9 @@ function launchServer (data) {
       res.end()
      };
   
-     if (urlObj[5] === true) {// upload
-      console.log('upload URL');
+     if (uploadTest === true) {// upload
+      console.log('^^ ----- upload URL ------ ^^');
+      res.writeHead(200, { 'Content-Type': 'application/json' }) 
       res.end()
      };
 
@@ -288,6 +301,10 @@ function progress(params) {
     };
     
     if (progressCounter === 0) {
+        console.log('Set fileState here');
+        console.log(controller_type[0]);
+                  
+        fileState[0].controllerType = controller_type[0]
         status.fileState = fileState;
         status.totalTime = 100;
         status.totalProgress = 0;
@@ -301,9 +318,11 @@ function progress(params) {
         status.totalProgress = 100;
         status.upgradeStatus = 0;
         isExecuting = false;
+        identity.isActivated = true;
         progressCounter = 0;
         software = { major: 4, minor: 12, build: 1412};
-        dataScript.buildControllers(software, controller_type);
+        ControllerConnected = true;
+        dataScript.buildControllers(software, controller_type, ControllerConnected);
     };
   };
 
@@ -321,10 +340,12 @@ function progress(params) {
       status.upgradeStatus = 0;
       isExecuting = false;
       fullFlow = false;
-      identity.isActivated = true;
       progressCounter = 0;
       software = { major: 4, minor: 12, build: 1412};
-      dataScript.buildControllers(software, controller_type);
+      ControllerConnected = true;
+      dataScript.buildControllers(software, controller_type, ControllerConnected);
+      identity.isActivated = true;
+
   };
     
   };
@@ -359,6 +380,7 @@ function progress(params) {
 
 
   };
+  
   actionType = 'launch'
   DBScript.writeDB(actionType,status,identity)      
 };
