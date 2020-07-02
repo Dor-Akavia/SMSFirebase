@@ -1,5 +1,7 @@
 var DBScript = require('./DB')
 
+var keepAliveResponse = null;
+var identityStatusResponse = null;
 
 var status = []
 status.fileState = {};
@@ -13,7 +15,7 @@ identity.controllers ={};
 identity.batteries= {};
 identity.isActivated= false;
 identity.isReady= true;
-identity.myseBaseUrl = '/';
+identity.homeUrl = '/';
 identity.statusUrl = '/#/commissioning/status';
 identity.viewOnlyUrl =  '/mode/view_only';
 identity.serialNumber = '500FF004-53'
@@ -77,6 +79,8 @@ exports.fileState = fileState;
 exports.controller_type = controller_type;
 exports.software = software;
 exports.ControllerConnected = ControllerConnected;
+exports.keepAliveResponse = keepAliveResponse;
+exports.identityStatusResponse = identityStatusResponse;
 
 
 

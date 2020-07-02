@@ -6,6 +6,7 @@ var dataScript = require('./data')
 const { read } = require('fs')
 const { log } = require('console')
 const { connected } = require('process')
+var proto = DBScript.proto;
 
 
 var urlObj = [] // refactor this into an object
@@ -17,6 +18,8 @@ urlObj[4] = '/mobile/commissioning/v1/manual'
 urlObj[5] = false // upload
 urlObj[6] = false // 404
 urlObj[7] = '/favicon.ico' // favicon
+urlObj[8] = '/mobile/commissioning/v1/keep_alive'
+urlObj[9] = '/mobile/commissioning/v1/device_identity_status'
 
 var pathData;
 var value = null;
@@ -30,6 +33,9 @@ var software = dataScript.software;
 var fileState = dataScript.fileState;
 var controller_type = dataScript.controller_type;
 var ControllerConnected = dataScript.ControllerConnected;
+var keepAliveResponse = dataScript.keepAliveResponse;
+var identityStatusResponse = dataScript.identityStatusResponse;
+
 
 // *************************
 
@@ -62,16 +68,17 @@ function launchServer (data) {
       
       if (pathData !== urlObj[0] && pathData !== urlObj[1] && // create an array of strings
           pathData !== urlObj[2] && pathData !== urlObj[3] &&
-          pathData !== urlObj[4] && pathData !== urlObj[7] && uploadTest === false){ // 404
+          pathData !== urlObj[4] && pathData !== urlObj[7] && uploadTest === false
+          && pathData !== urlObj[8] && pathData !== urlObj[9]){ // 404
           res.writeHead(404, { 'Content-Type': 'application/json' })
-          res.write('404 Not Found\n')
-          console.log('404');   
+          // console.log('404');
+          res.end();   
           return
       }; 
       
 
       if (pathData === urlObj[0]) { // status
-        console.log('Status URL'); 
+        // console.log('Status URL'); 
 
         if (isExecuting === false) {
           actionType = 'readStatus'
@@ -123,7 +130,7 @@ function launchServer (data) {
       };
   
       if (pathData === urlObj[1]) { // identity
-      console.log('Identity URL');
+      // console.log('Identity URL');
       actionType = 'readIdentity'
       DBScript.readDB(actionType)
 
@@ -149,7 +156,7 @@ function launchServer (data) {
       };
   
       if (pathData === urlObj[2]) { // prepare
-      console.log('prepare URL');  
+      // console.log('prepare URL');  
       res.writeHead(200, { 'Content-Type': 'application/json' }) 
       res.end()
 
@@ -157,7 +164,7 @@ function launchServer (data) {
       
 
       if (pathData === urlObj[3]) { // execute
-      console.log('------- execute URL has been initiated -----------');
+      console.log('------- Execute URL has been initiated -----------');
       isExecuting = true;
       res.end()
      };
@@ -170,7 +177,8 @@ function launchServer (data) {
         prepareExecute(extractedQueryString);
         
         function prepareExecute(extractedQueryString) {
-
+            console.log('Enter prepare execute function');
+            
           queryCounter = [
             {Id:0, name: "fileState0", value: extractedQueryString.fileState0},
             {Id:1, name: "fileState1", value: extractedQueryString.fileState1},
@@ -199,12 +207,17 @@ function launchServer (data) {
                 if (filtered[index].Id === 0) {
                     fileState[0].fileType = filtered[index].value
                     both = true;
+                    // dataScript.identity.isActivated = true;
+                    // actionType = 'writeIdentity'
+                    // DBScript.writeDB(actionType,status,identity)
+                    
                 }
 
                 if (filtered[index].Id === 1) {
 
                   if (both === false) {
-                    fileState[0].fileType = filtered[index].value                   
+                    fileState[0].fileType = filtered[index].value
+                    
                   }
 
                   if (both === true) {
@@ -240,6 +253,7 @@ function launchServer (data) {
 
               
           }
+          fileState[0].controllerType = controller_type[0]
           status.fileState = fileState
           dataScript.buildControllers(software,controller_type,ControllerConnected);
           actionType = 'launch'
@@ -247,15 +261,72 @@ function launchServer (data) {
           
         }
       manualInput = true;
-      console.log('manual URL');   
+      console.log('------- Manual input has been set -----------');   
       res.end()
      };
   
      if (uploadTest === true) {// upload
-      console.log('^^ ----- upload URL ------ ^^');
+      console.log('----------- upload Successfull -----------');
       res.writeHead(200, { 'Content-Type': 'application/json' }) 
       res.end()
      };
+
+     if (pathData === urlObj[8]) {
+        console.log('Keep-Alive');
+        actionType = 'keep-alive'
+        DBScript.readDB(actionType)
+
+        var callBackpromise = new Promise(function(resolve, reject) { 
+          setTimeout(() => {
+          var value = dataScript.keepAliveResponse
+          console.log('*********************');
+          console.log(value);
+          
+          resolve(value);            
+          }, 2000);
+
+          if (value === undefined) {
+              reject("callback is not defined");
+          }
+       });
+      callBackpromise.then(function (snapshot){
+        res.writeHead(200, { 'Content-Type': 'application/json' }) 
+        res.write(snapshot);  
+        
+        res.end()
+      })      
+     }
+
+     if (pathData === urlObj[9] && isExecuting === true) {
+      res.writeHead(404, { 'Content-Type': 'application/json' }) 
+      res.end()
+     }
+
+     if (pathData === urlObj[9] && isExecuting === false) {
+        console.log('identity-Status');
+        actionType = 'identity-Status'
+        DBScript.readDB(actionType)
+
+        var callBackpromise = new Promise(function(resolve, reject) { 
+          setTimeout(() => {
+          var value = dataScript.identityStatusResponse
+          console.log('*********************');
+          console.log(value);
+          
+          resolve(value);            
+          }, 2000);
+
+          if (value === undefined) {
+              reject("callback is not defined");
+          }
+       });
+      callBackpromise.then(function (snapshot){
+        res.writeHead(200, { 'Content-Type': 'application/json' }) 
+        res.write(snapshot);  
+        
+        res.end()
+      })      
+     }
 
 
     })
@@ -301,9 +372,6 @@ function progress(params) {
     };
     
     if (progressCounter === 0) {
-        console.log('Set fileState here');
-        console.log(controller_type[0]);
-                  
         fileState[0].controllerType = controller_type[0]
         status.fileState = fileState;
         status.totalTime = 100;

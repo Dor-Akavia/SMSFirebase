@@ -30,7 +30,7 @@ button {
 }
 
 
-.controllers, .flowType {
+.controllers, .flowType, .version {
     visibility: visible;
     margin-top: 10px;
     font-size: 20px;

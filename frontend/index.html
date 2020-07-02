@@ -27,6 +27,7 @@
                 <p>Avilable controllers:</p>
                 <img src="https://www.solaredge.com/sites/default/files/inline-images/edge_0.png" style="margin-top: -20px; width: 170px; height: 5px;"><br>
             </div>
+
         </div>
 
         <div class="myButton">
@@ -211,13 +212,13 @@
 
             function manualSend(controllersURLQuery,fileStateQueryString) {
                 console.log('Manual send started!');
-                var url = 'http://' + 'localhost' + ':8080/mobile/commissioning/v1/manual' + '?' + controllersURLQuery + fileStateQueryString
+                var url = 'http://' + '10.4.20.21' + ':8080/mobile/commissioning/v1/manual' + '?' + controllersURLQuery + fileStateQueryString
                 console.log(url);
-                
                   
                 var xhr = new XMLHttpRequest();
                 xhr.open("POST", url, true);
                 xhr.send();
+                
                 console.log('Manual send finished!');
             }
 

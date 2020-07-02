@@ -6,6 +6,8 @@ var commissioningPath = './protoFiles/'
 var status = dataScript.status;
 var identity = dataScript.identity;
 var actionType = dataScript.actionType;
+var keepAliveResponse = dataScript.keepAliveResponse;
+var identityStatusResponse = dataScript.identityStatusResponse;
 
 // DB CONFIG ************************************************
 var firebase = require('firebase')  
@@ -24,7 +26,7 @@ var statusPath = firebase.database().ref('statusTable')
 var identityPath = firebase.database().ref('identityTable')
     
 // *********************************************************     
-function writeDB (actionType,status,identity ) { 
+function writeDB (actionType,status,identity) { 
 
     if (actionType === 'launch') {
     console.log('Enter write launch');
@@ -50,6 +52,10 @@ var identityDBCallBack = [];
 
 function readDB (actionType,statusBuffer,identityBuffer) {
 
+  if (actionType === 'keep-alive') {
+      proto(statusDBCallBack,actionType)
+  }
+
   if (actionType === 'readStatus') {    
       var statusPromise = firebase.database().ref(statusPath).once('value')
       statusPromise.then(function (snapshot) {
@@ -71,6 +77,30 @@ function readDB (actionType,statusBuffer,identityBuffer) {
       proto(identityDBCallBack,actionType);
       
       });
+  };
+  if (actionType === 'identity-Status') {
+      var identityStatusCallback = {status:null,identity:null}
+
+      var identityPromise = firebase.database().ref(identityPath).once('value')
+      identityPromise.then(function (snapshot) {
+      identityDBCallBack = snapshot.val().identity || 'Null'
+      identity = identityDBCallBack
+      identityStatusCallback.identity = identityDBCallBack      
+      });
+
+      var statusPromise = firebase.database().ref(statusPath).once('value')
+      statusPromise.then(function (snapshot) {
+      statusDBCallBack = snapshot.val().status || 'Null'
+      status = statusDBCallBack 
+      identityStatusCallback.status = statusDBCallBack
+
+      proto(identityStatusCallback,actionType);
+
+      });
+      
+      
+      
+
   };
 
   
@@ -106,6 +136,18 @@ function readDB (actionType,statusBuffer,identityBuffer) {
   var myDoc = protobuf.load(commissioningPath + 'commissioning.proto', function (err, root) {
       if (err) throw err
 
+      if (actionType === 'keep-alive') {
+          console.log('proto keep alive'); 
+          protoKeepAlive();
+      }
+
+      if (actionType === 'identity-Status') {
+          console.log('proto identity-Status'); 
+          protoidentityStatus(callback);
+          
+          
+      }
+
       if (actionType === 'writeStatus' || actionType === 'readStatus') {
           console.log('st');
           protoStatus(callback);            
@@ -121,39 +163,64 @@ function readDB (actionType,statusBuffer,identityBuffer) {
       }
 
       function protoStatus(callback) {
-          statusRoot = root.lookupType('commissioning.Status')
-          var statusMessage = statusRoot 
-          statusMessage = []
-          statusMessage = callback
-          var readyStatusMessage = statusRoot.create(statusMessage)
-          statusBuffer = statusRoot.encode(readyStatusMessage).finish()
-          
-          console.log('Debug: ');
-          var statusObject = statusRoot.toObject(readyStatusMessage, {
-              enums: String,
-              longs: String,
-              bytes: String,
-              defaults: true,
-              arrays: true,
-              objects: true,
-              oneofs: true
-          })
-          console.log(statusObject)
+        statusRoot = root.lookupType('commissioning.Status')
+        var statusMessage = statusRoot 
+        statusMessage = []
+        statusMessage = callback
+        var readyStatusMessage = statusRoot.create(statusMessage)
+        statusBuffer = statusRoot.encode(readyStatusMessage).finish()
+        
+        console.log('Debug: ');
+        var statusObject = statusRoot.toObject(readyStatusMessage, {
+            enums: String,
+            longs: String,
+            bytes: String,
+            defaults: true,
+            arrays: true,
+            objects: true,
+            oneofs: true
+        })
+        console.log(statusObject)
+        return statusMessage
       }
 
       function protoIdentity(callback) {
-          identityRoot = root.lookupType('commissioning.DeviceIdentity')
-          var identityMessage = identityRoot
-          identityMessage = []
-          identityMessage = callback
+        identityRoot = root.lookupType('commissioning.DeviceIdentity')
+        var identityMessage = identityRoot
+        identityMessage = []
+        identityMessage = callback
+        
+        var readyIdentityMessage = identityRoot.create(identityMessage)
+
+        identityBuffer = identityRoot.encode(readyIdentityMessage).finish() 
+
+        console.log('Debug: ');
+        
+        var identityObject = identityRoot.toObject(readyIdentityMessage, {
+            enums: String,
+            longs: String,
+            bytes: String,
+            defaults: true,
+            arrays: true,
+            objects: true,
+            oneofs: true
+        })
+        console.log(identityObject)
+        return identityMessage 
+                  
+      } 
+      function protoKeepAlive() {
+          keepAliveRoot = root.lookupType('commissioning.KeepAlive')
+          var  keepAliveMessage = keepAliveRoot 
+          var SN = '500FF004'
+          keepAliveMessage.serialNumber = SN
           
-          var readyIdentityMessage = identityRoot.create(identityMessage)
-
-          identityBuffer = identityRoot.encode(readyIdentityMessage).finish() 
-
+          var readykeepAliveMessage = keepAliveRoot.create(keepAliveMessage)
+          var keepAliveBuffer = keepAliveRoot.encode(readykeepAliveMessage).finish()
+          // console.log(keepAliveBuffer)
+          
           console.log('Debug: ');
-          
-          var identityObject = identityRoot.toObject(readyIdentityMessage, {
+          var readykeepAliveObject = keepAliveRoot.toObject(readykeepAliveMessage, {
               enums: String,
               longs: String,
               bytes: String,
@@ -162,9 +229,43 @@ function readDB (actionType,statusBuffer,identityBuffer) {
               objects: true,
               oneofs: true
           })
-          console.log(identityObject) 
-                     
-      } 
+          console.log(readykeepAliveObject);
+          dataScript.keepAliveResponse = keepAliveBuffer
+          
+      }
+      
+      function protoidentityStatus() {
+        var identityForJoinedMessage = protoIdentity(callback.identity);
+        var statusForJoinedMessage = protoIdentity(callback.status);
+
+        console.log(identityForJoinedMessage);
+        console.log(statusForJoinedMessage);
+        
+        identityStatusRoot = root.lookupType('commissioning.DeviceIdentityStatus')
+          var  identityStatusMessage = identityStatusRoot 
+          identityStatusMessage.deviceIdentity = identityForJoinedMessage
+          identityStatusMessage.deviceStatus = statusForJoinedMessage
+          
+          var readyidentityStatusMessage = identityStatusRoot.create(identityStatusMessage)
+          var identityStatusBuffer = identityStatusRoot.encode(readyidentityStatusMessage).finish()
+          // console.log(identityStatusBuffer)
+          
+          console.log('Debug: ');
+          var readyidentityStatusObject = identityStatusRoot.toObject(readyidentityStatusMessage, {
+              enums: String,
+              longs: String,
+              bytes: String,
+              defaults: true,
+              arrays: true,
+              objects: true,
+              oneofs: true
+          })
+          console.log(readyidentityStatusObject);
+          dataScript.identityStatusResponse = identityStatusBuffer
+          
+      }
+
+
       
       if (actionType === 'writeStatus' || actionType === 'readStatus') {
           console.log('Returining status buffer');
