@@ -1,11 +1,52 @@
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <p>test!</p>
-</head>
-<body>
+    <head>
+        <title>Mock Server</title>
+        <link rel="stylesheet" href="/frontend/style.css">
+        <link rel="shortcut icon" type="image/png" href="https://monitoringbeta.solaredge.com/solaredge-web/common/img/logos/favicon.png" />
+    </head>
+
+        <div class="myImage">
+            <img src="https://www.solaredge.com/themes/solaredge_2018/img/SolarEdge_logo_footer.svg" height="80" style="margin-top: 20px; margin-left: 5px;">
+        </div>
+
+<body class="myBody">
+    <div class="main">
+        <div class="flowType">
+            <p>Device actions:</p>
+            <img src="https://www.solaredge.com/sites/default/files/inline-images/edge_0.png" style="margin-top: -20px; width: 130px; height: 5px;"><br>
+            <div class="avilableFlows">
+            </div>
+        </div>
+
+        <div class="controllers">
+            <p>Avilable controllers:</p>
+            <img src="https://www.solaredge.com/sites/default/files/inline-images/edge_0.png" style="margin-top: -20px; width: 170px; height: 5px;"><br>
+        </div>
+    </div>
+
+    <div class="myButton">
+        <button onclick="trigger()">Submit</button>
+    </div>
+
+    <script src="/backend/src/scripts/buildHome.js"></script>
+    <script src="/backend/src/scripts/data.js"></script>
+    <script type="module" src="/backend/src/scripts/modules.js"></script>
+    <script src="/backend/src/scripts/manualInput.js"></script>
+
+
+    <script>
+         function trigger(params) {
+            runType = 'normal'
+            test(runType);
+            };
+    </script>
+ 
+
     
 </body>
 </html>
+
+
+<script>
+    
+</script>

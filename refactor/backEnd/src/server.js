@@ -8,16 +8,11 @@ const paths = data.paths
 const app = express();
 
 
-
-
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(express.static(path.join(paths.frontEndDir, 'dist')));
+app.use(express.static(path.join(paths.baseDir)));
 
-// api routes
-// app.use('/api', api);
 
 // serve index.html
 app.get('/', (req, res) => {

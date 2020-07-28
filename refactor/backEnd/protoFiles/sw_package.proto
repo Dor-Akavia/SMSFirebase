@@ -1,0 +1,47 @@
+//*****************************************************************************
+// COPYRIGHT (C) SolarEdge Inc. All rights reserved.
+// 
+//-----------------------------------------------------------------------------
+// Filename: sw_package.proto
+// $Revision:: 25013             $:  Revision of last commit
+// $Author:: yuval.g             $:  Author of last commit
+// $Date:: 2017-10-19 01:02:44 +#$:  Date of last commit
+//-----------------------------------------------------------------------------
+// Desc: 
+// ProtoBuf messages used for SW Upgrade
+//
+//*****************************************************************************
+
+syntax = "proto2";
+import "general_types.proto";
+package sw_package;
+
+//*****************************************************************************
+
+message SWPackageHeader {
+  message MetaData {
+    optional general_types.ControllerType target = 1;
+    optional general_types.Version version = 2;
+    optional general_types.Version min_version = 3; // min version to allow the upgrade
+    optional general_types.Version max_version = 4; // max version to allow the upgrade
+  }
+    
+  message SoftwareConfig {
+    optional general_types.SysParams params_before_upgrade = 1;
+    optional general_types.SysParams params_after_upgrade = 2;
+    repeated general_types.XPacket packets_before_upgrade = 3;
+    repeated general_types.XPacket packets_after_upgrade = 4;
+  }
+ 
+  optional MetaData metadata = 1;
+  optional SoftwareConfig config = 2;
+  optional uint32 size = 3; // Size of the firmware file following this header
+}
+
+
+
+
+
+
+
+

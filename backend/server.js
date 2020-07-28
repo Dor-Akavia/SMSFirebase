@@ -3,7 +3,7 @@ var protobuf = require('protobufjs')
 var url = require('url')
 var DBScript = require('./DB')
 var dataScript = require('./data')
-const { read } = require('fs')
+var read = require('fs')
 const { log } = require('console')
 const { connected } = require('process')
 var proto = DBScript.proto;
@@ -20,6 +20,8 @@ urlObj[6] = false // 404
 urlObj[7] = '/favicon.ico' // favicon
 urlObj[8] = '/mobile/commissioning/v1/keep_alive'
 urlObj[9] = '/mobile/commissioning/v1/device_identity_status'
+urlObj[10] = '/'
+urlObj[11] = '/web/v1/information'
 
 var pathData;
 var value = null;
@@ -69,7 +71,8 @@ function launchServer (data) {
       if (pathData !== urlObj[0] && pathData !== urlObj[1] && // create an array of strings
           pathData !== urlObj[2] && pathData !== urlObj[3] &&
           pathData !== urlObj[4] && pathData !== urlObj[7] && uploadTest === false
-          && pathData !== urlObj[8] && pathData !== urlObj[9]){ // 404
+          && pathData !== urlObj[8] && pathData !== urlObj[9] && pathData !== urlObj[10]
+          && pathData !== urlObj[11]){ // 404
           res.writeHead(404, { 'Content-Type': 'application/json' })
           // console.log('404');
           res.end();   
@@ -327,6 +330,22 @@ function launchServer (data) {
         res.end()
       })      
      }
+
+     // new functionality! 28/07/20 ///
+     ///////////////////////////////////
+     if (pathData === urlObj[10] || pathData === urlObj[11]) {
+      console.log('Mobile-Web');
+
+      read.readFile('demoFile.html', function(err, data) {
+       if (err) throw err; // crash with actual error instead of assuming success
+       res.writeHead(200, {'Content-Type': 'text/html'});
+       res.write(data);
+       res.end()
+     });
+    };
+
+    //////////////////////////////////
+    //////////////////////////////////
 
 
     })

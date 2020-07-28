@@ -1,0 +1,18 @@
+# general_types.options
+
+general_types.Battery.serial_number              max_size:40
+general_types.Battery.hwid                       max_size:40
+general_types.Battery.version                    max_size:40
+general_types.Battery.manufacturer               max_size:40
+
+general_types.Controller.serial_number           max_size:40
+
+general_types.SysParams.string_value             max_size:128
+
+general_types.XPacket.data                       max_size:512
+
+general_types.MapStringToString.key              max_size:45
+general_types.MapStringToString.value            max_size:45
+
+general_types.Header.id                          max_size:15
+general_types.PayloadData.data                  max_size : 512
