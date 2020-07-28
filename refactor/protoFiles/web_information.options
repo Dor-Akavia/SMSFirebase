@@ -1,0 +1,7 @@
+web_information.Information.sn                  max_size  : 15
+web_information.Information.hw_ids              max_count : 8
+web_information.Information.error_log           max_count : 50
+web_information.Information.warning_log         max_count : 50
+web_information.ErrorsLogger.errors             max_count : 32
+web_information.ControllersErrors.logger        max_count : 10
+web_information.Information.controllers         max_count : 10

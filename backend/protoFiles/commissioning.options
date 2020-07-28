@@ -1,0 +1,12 @@
+# commissioning.options
+
+commissioning.Activation.spff               max_size:40
+commissioning.Activation.spff_hash          max_size:40
+commissioning.Activation.pn                 max_size:40
+
+commissioning.DeviceIdentity.controllers    max_count:9
+commissioning.DeviceIdentity.batteries      max_count:4
+commissioning.DeviceIdentity.home_url       max_size:128
+commissioning.DeviceIdentity.status_url     max_size:128
+commissioning.DeviceIdentity.serial_number  max_size:128
+commissioning.DeviceIdentity.pn             max_size:40

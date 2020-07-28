@@ -1,0 +1,101 @@
+//*****************************************************************************
+// COPYRIGHT (C) SolarEdge Inc. All rights reserved.
+// 
+//-----------------------------------------------------------------------------
+// Filename: template.proto
+// $Revision:: 26467             $:  Revision of last commit
+// $Author:: benjamin.b        $:  Author of last commit
+// $Date::		       +#$:  Date of last commit
+//-----------------------------------------------------------------------------
+// Desc: 
+// THIS IS A TEMPLATE FOR CREATING PROTO DEFINITION FILES
+//
+//*****************************************************************************
+
+syntax = "proto2";
+import "types.proto";
+import "general_types.proto";
+
+package inv_stat;
+
+
+message Cmd {
+  enum STAT {
+    GET_STAT = 0;
+	GET_ERROR = 1;
+	GET_PRODUCTION = 2;
+  }
+   
+  oneof commands {
+    STAT cmd = 1;
+  }
+}
+
+//*****************************************************************************
+
+message STATMSG{
+  enum STAT {
+  	NO_AC = 0;
+    ZERO_SAFE = 1;
+    ZERO_BIGGER_SAFE = 2;
+    NO_PAIRED = 3;
+	  PAIRING = 4;
+    WAKEUP_GRM = 5;
+    PRODUCTION = 6;
+	  NIGHT = 7;
+	  ERROR_STAT = 8;
+  } 
+  
+  optional STAT stat = 1;
+  optional bool switchON = 2;
+  optional bool S_OK = 3;
+  optional bool ready = 4;
+  optional bool error = 5;
+  optional general_types.ProductType product_type = 6;
+  optional general_types.ProductFamily product_family = 7;
+  repeated general_types.Controller controllers = 8;
+  repeated general_types.Battery batteries = 9;
+}
+
+
+message Resp {
+  enum ERROR {
+    EMPTY = 0;
+    ARC = 1;
+    ISOLATION_RCD = 2;
+    GRID = 3;
+	  TEMPERATURE = 4;
+    PAIRING = 5;
+    OTHER = 6;
+  } 
+  
+  enum PRODUCTION_STAT {
+    TH0 = 0;
+    TH1 = 1;
+    TH2 = 2;
+    TH3 = 3;
+  } 
+  
+ 
+  oneof responses {
+    STATMSG statmsg = 1;
+    ERROR error = 2;
+    PRODUCTION_STAT production = 3;
+  }
+}
+
+//*****************************************************************************
+
+message InverterStatus {
+  oneof types {
+    Cmd cmd = 1;
+    Resp resp = 2;  
+  }
+}
+
+
+
+
+
+
+

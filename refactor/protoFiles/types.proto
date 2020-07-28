@@ -1,0 +1,135 @@
+//*****************************************************************************
+// COPYRIGHT (C) SolarEdge Inc. All rights reserved.
+// 
+//-----------------------------------------------------------------------------
+// Filename: types.proto
+// $Revision:: 26820             $:  Revision of last commit
+// $Author:: itay.p              $:  Author of last commit
+// $Date:: 2018-01-30 17:25:25 +#$:  Date of last commit
+//-----------------------------------------------------------------------------
+// Desc: 
+// ProtoBuf messages used to wrap scalar types
+//
+//*****************************************************************************
+
+syntax = "proto2";
+package types;
+
+//*****************************************************************************
+
+message Uint32 {
+    message Uint32Atr {
+		optional uint32 min = 1 [default = 0];
+		optional uint32 max = 2 [default = 0];
+		optional uint32 step = 3 [default = 0];
+    }
+
+    optional uint32 value = 1 [default = 0];
+    optional bool ro = 2 [default = false];
+    optional Uint32Atr attributes = 3;
+}
+
+message Uint64 {
+	message Uint64Atr {
+		optional uint64 min = 1 [default = 0];
+		optional uint64 max = 2 [default = 0];
+		optional uint64 step = 3 [default = 0];
+	}
+
+    optional uint64 value = 1 [default = 0];
+    optional bool ro = 2 [default = false];
+    optional Uint64Atr attributes = 3;
+}
+
+message Int32 {
+	message Int32Atr {
+		optional int32 min = 1 [default = 0];
+		optional int32 max = 2 [default = 0];
+		optional int32 step = 3 [default = 0];
+	}
+
+	optional int32 value = 1 [default = 0];
+  optional bool ro = 2 [default = false];
+	optional Int32Atr attributes = 3;
+}
+
+message Float {
+	message FloatAtr {
+		optional float min = 1 [default = 0];
+		optional float max = 2 [default = 0];
+		optional float step = 3 [default = 0];
+	}
+
+	optional float value = 1 [default = 0];
+  optional bool ro = 2 [default = false];
+	optional FloatAtr attributes = 3;
+}
+
+message FloatS {
+	message FloatSAtr {
+		optional int32 min = 1 [default = 0];
+		optional int32 max = 2 [default = 0];
+		optional int32 step = 3 [default = 0];
+	}
+
+	optional int32 value = 1 [default = 0];
+  optional int32 scaling = 2 [default = 1];
+  optional bool ro = 3 [default = false];
+  optional FloatSAtr attributes = 4;
+}
+
+message Double {
+  message DoubleAtr {
+		optional int32 min = 1 [default = 0];
+		optional int32 max = 2 [default = 0];
+		optional int32 step = 3 [default = 0];
+  }
+  
+  optional double value = 1 [default = 0];
+  optional bool ro = 2 [default = false];
+  optional DoubleAtr attributes = 3;
+}
+
+message Bool {
+  optional bool value = 1 [default = false];
+  optional bool ro = 2 [default = false];
+}
+
+message String {
+  optional string value = 1 [default = ""];
+  optional bool ro = 2 [default = false];
+}
+
+message Bytes {
+  optional bytes value = 1 [default = ""];
+  optional bool ro = 2 [default = false];
+}
+
+//*****************************************************************************
+
+message MapUintToUint {
+  optional uint32 key = 1 [default = 0];
+  optional uint32 value = 2 [default = 0];
+}
+
+message MapIntToInt {
+  optional int32 key = 1 [default = 0];
+  optional int32 value = 2 [default = 0];
+}
+
+message MapFloatToFloat {
+  optional float key = 1 [default = 0];
+  optional float value = 2 [default = 0];
+}
+
+message MapFloatSToFloatS {
+  optional FloatS key = 1;
+  optional FloatS value = 2;
+}
+
+message MapStringToString {
+  optional string key = 1 [default = ""];
+  optional string value = 2 [default = ""];
+}
+
+

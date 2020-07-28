@@ -1,0 +1,6 @@
+# inv_stat.options
+
+inv_stat.STATMSG.controllers    max_count:9
+inv_stat.STATMSG.batteries      max_count:4
+inv_stat.STATMSG.serial_number  max_size:128
+inv_stat.STATMSG.pn             max_size:40

@@ -1,0 +1,51 @@
+//*****************************************************************************
+// COPYRIGHT (C) SolarEdge Inc. All rights reserved.
+// 
+//-----------------------------------------------------------------------------
+// Filename: web_information.proto
+// $Revision:: 26533             $:  Revision of last commit
+// $Author:: lior.za             $:  Author of last commit
+// $Date:: 2018-01-11 19:47:59 +#$:  Date of last commit
+//-----------------------------------------------------------------------------
+// Desc: 
+// ProtoBuf messages used for WEB UI - Information menu 
+//
+//*****************************************************************************
+
+syntax = "proto2";
+import "general_types.proto";
+import "types.proto";
+package web_information;
+
+//*****************************************************************************
+
+message ErrorsLogger {
+    message Error {
+      optional uint32 error_code = 1;
+      optional general_types.Date start_time = 2;
+      optional types.String error_display_intro = 3; // if empty the display intro is "hex(subsystem) x hex(error_code)"
+    }
+    optional uint32 controllerID = 1;
+    optional uint32 subsystem = 2; 
+    repeated Error errors = 3;
+    optional types.String controller_id_string = 4;
+  }
+
+message ControllersErrors{
+  repeated ErrorsLogger logger = 1;
+}
+
+//*****************************************************************************
+
+message Information { 
+  optional string sn = 1;
+  optional general_types.Version cpu = 2;
+  optional general_types.Version dsp1 = 3;
+  optional general_types.Version dsp2 = 4;
+  repeated general_types.MapStringToString hw_ids = 5;
+  repeated general_types.MapUintToUint error_log = 6;
+  repeated general_types.MapUintToUint warning_log = 7;
+  optional ControllersErrors errors = 8;
+  optional general_types.Version bui_version = 9;
+  repeated general_types.Controller controllers = 10;
+}

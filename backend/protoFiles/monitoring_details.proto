@@ -1,0 +1,23 @@
+//*****************************************************************************
+// COPYRIGHT (C) SolarEdge Inc. All rights reserved.
+// 
+//-----------------------------------------------------------------------------
+// Filename: monitoring_details.proto
+// $Revision::                   $:  Revision of last commit
+// $Author:: Yanay.R             $:  Author of last commit
+// $Date:: 2019-09-26            $:  Date of last commit
+//-----------------------------------------------------------------------------
+// Desc: 
+// ProtoBuf messages used for sharing Monitoring (Site) details between Core and SetApp
+//
+//*****************************************************************************
+
+syntax = "proto2";
+import "types.proto";
+package monitoring_details_package;
+
+message ApiMonitoringDetailsBase {
+  optional types.String installer_id = 1;       // No max_size in .options file. Default Max size for types.String.value = max_size:64
+  optional types.String account_id = 2; 
+  optional types.String site_id = 3;
+}

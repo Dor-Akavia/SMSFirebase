@@ -1,0 +1,61 @@
+//*****************************************************************************
+// COPYRIGHT (C) SolarEdge Inc. All rights reserved.
+// 
+//-----------------------------------------------------------------------------
+// Filename: commissioning_err_resps.proto
+// $Revision:: 25013             $:  Revision of last commit
+// $Author:: benjamin.b           $:  Author of last commit
+// $Date:: 6/1/2019		       +#$:  Date of last commit
+//-----------------------------------------------------------------------------
+// Desc: 
+// On any command-response communication with Protobuf content, 
+// the error response is in a defined scheme, described in this file.
+//
+//*****************************************************************************
+
+syntax = "proto2";
+import "types.proto";
+import "general_errors.proto";
+package commissioning_err_resps;
+
+//*****************************************************************************
+//Error Bad_request (restapi - error code 400, Mqtt error BAD_REQUEST)
+message BadRequest {
+  oneof errors {
+    general_errors.BadRequest general_error = 1;
+  }
+
+  optional types.String description = 2; 
+}
+
+//*****************************************************************************
+//Error Unauthorized (restapi - error code 401, Mqtt error UNAUTHORIZED)
+message Unauthorized {
+  oneof errors {
+    general_errors.Unauthorized general_error = 1;
+  }
+
+  optional types.String description = 2;
+}
+
+//*****************************************************************************
+//Error Forbidden (restapi - error code 403, Mqtt error FORBIDDEN)
+message Forbidden {
+  oneof errors {
+    general_errors.Forbidden general_error = 1;
+  }
+
+  optional types.String description = 2;
+}
+
+//*****************************************************************************
+//Error internal server (restapi - error code 500)
+message InternalError {
+  oneof errors {
+    general_errors.InternalError general_error = 1;
+  }
+
+  optional types.String description = 2;
+}
+
+
