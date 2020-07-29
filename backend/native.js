@@ -5,22 +5,7 @@ const IOS = "webkit";
 
 
 
-    function isIos(){
-        var isIos = window.webkit !== undefined
-        console.log(isIos);
-        
-        return window.webkit !== undefined;
-    }
 
-    function isAndroid(){
-        var isAndroid = window.Android !== undefined
-        console.log(isAndroid);
-        
-        return window.Android !== undefined;
-    }
-
-    isIos();
-    isAndroid();
 
     function hasApi(api_function, log_error = true){
         if (window.Android !== undefined && window.Android[api_function] !== undefined){

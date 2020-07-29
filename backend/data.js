@@ -13,22 +13,22 @@ status.totalProgress=0;
 var identity = []
 identity.controllers ={};
 identity.batteries= {};
-identity.isActivated= true;
+identity.isActivated= false;
 identity.isReady= true;
 identity.homeUrl = '/';
 identity.statusUrl = '/#/commissioning/status';
 identity.viewOnlyUrl =  '/mode/view_only';
 identity.serialNumber = '500FF004-53'
 
+var baseSoftware = { major: 4, minor: 7, build: 0 };
+var upgradeSoftware = { major: 4, minor: 12, build: 0 };
 
-
-var software =  { major: 4, minor: 12, build: 1408 };
-var controller_type = [0,1,2]
+var controller_type = [0]
 var controllers = [];
 var ControllerConnected = true;
 
 
-buildControllers(software,controller_type,ControllerConnected);
+buildControllers(baseSoftware,controller_type,ControllerConnected);
 function buildControllers(software, controller_type,ControllerConnected) {
     for (let index = 0; index < controller_type.length; index++) {
     
@@ -54,7 +54,7 @@ var manualInput = false;
 
 
 var fileState = {0:{
-    fileType: 3,
+    fileType: 3, // 3 activation 5 fw upgrade
     retry: 0,
     fileStatus: 2,
     executionProgress: 0,
@@ -77,7 +77,8 @@ exports.manualInput = manualInput;
 exports.buildControllers = buildControllers;
 exports.fileState = fileState;
 exports.controller_type = controller_type;
-exports.software = software;
+exports.baseSoftware = baseSoftware;
+exports.upgradeSoftware = upgradeSoftware;
 exports.ControllerConnected = ControllerConnected;
 exports.keepAliveResponse = keepAliveResponse;
 exports.identityStatusResponse = identityStatusResponse;

@@ -2,7 +2,7 @@
 
     <head>
         <title>Mock Server</title>
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="../frontend/style.css">
         <link rel="shortcut icon" type="image/png" href="https://monitoringbeta.solaredge.com/solaredge-web/common/img/logos/favicon.png" />
     </head>
 
@@ -28,24 +28,181 @@
                 <img src="https://www.solaredge.com/sites/default/files/inline-images/edge_0.png" style="margin-top: -20px; width: 170px; height: 5px;"><br>
             </div>
 
+            <div class="version">
+                <p>Choose version:</p>
+                <img src="https://www.solaredge.com/sites/default/files/inline-images/edge_0.png" style="margin-top: -20px; width: 135px; height: 5px;"><br>
+            </div>
+
         </div>
 
         <div class="myButton">
             <button onclick="trigger()">Submit</button>
+            <button onclick="reset()" >Reset</button>
         </div>
 
-        <script src="../backend/buildHome.js"></script>
-
         <script>
+    var avilableControllers = [
+        {name:"PORTIA", id: 0}, 
+        {name:"VENUS_DSP1", id: 1},
+        {name:"VENUS_DSP2", id: 2},
+        {name:"JUPITER_DSP1", id:3},
+        {name:"JUPITER_DSP2", id:4},
+        {name:"VENUS3_DSP1", id:8},
+        {name:"VENUS3_DSP2", id:9},
+        {name:"VENUS_LITE_DSP1", id:10},
+        {name:"VENUS_LITE_DSP2", id:11}, 
+        {name:"EVSE", id:13},
+        {name:"SE_DCDC", id: 14},
+        {name:"METER", id: 15},
+        {name:"JUPITER_SE_DSP1", id: 19},  
+        {name:"JUPITER_SE_DSP2", id: 20},
+        {name:"BUI", id:21},
+        {name:"FOUR_BOX", id:22}
+   ];
+
+    var flows = [
+        {name:"Activation", id:3, value:3, text:"Activate the device"},
+        {name:"FW_Upgrade", id:5,value:5, text: "Upgrade the device"}
+    ];
+
+    var buildVersionBy = [
+        {name:'major: ',placeHolder:4, id:0},
+        {name:'minor: ',placeHolder:7, id:1},
+        {name:'build: ',placeHolder:12, id:2},
+        {name:'major: ',placeHolder:4, id:3},
+        {name:'minor: ',placeHolder:7, id:4},
+        {name:'build: ',placeHolder:12, id:5},
+    ]
+
+
+    function buildHome(params) {  
+        var half = Math.round(avilableControllers.length / 2)
+        var controllersGrid = document.querySelector('.controllers');
+        var flowsGrid = document.querySelector('.avilableFlows');
+        var div1 = document.createElement("div");
+        var div2 = document.createElement("div");
+        div1.className = "avilableControllers"
+        div2.className = "avilableControllers"
+
+        for (let index = 0; index <= 1; index++) {
+            var flowsCheckbox = document.createElement("INPUT");
+            flowsCheckbox.setAttribute("type", "checkbox")
+            flowsCheckbox.value = flows[index].id
+            flowsCheckbox.id = flows[index].name
+            flowsCheckbox.name = flows[index].name
+
+            var flowsLabel = document.createElement("label"); 
+            flowsLabel.setAttribute("for", flows[index].name)
+            flowsLabel.textContent = flows[index].text
+
+            flowsGrid.appendChild(flowsCheckbox);
+            flowsGrid.appendChild(flowsLabel);
+            
+            var flowsbar = document.createElement("br");
+            flowsGrid.appendChild(flowsbar);     
+                
+            
+        }
+
+        for (let index = 0; index < avilableControllers.length; index++) {
+            var checkbox = document.createElement("INPUT");
+            checkbox.setAttribute("type", "checkbox")
+            checkbox.id = avilableControllers[index].name      
+            checkbox.name = avilableControllers[index].name      
+            checkbox.value = avilableControllers[index].id 
+
+            var label = document.createElement("label");  
+            label.setAttribute("for", avilableControllers[index].name)
+            label.textContent = avilableControllers[index].name
+
+            var bar = document.createElement("br");
+
+            if (index <= half) {
+                div1.appendChild(checkbox);
+                div1.appendChild(label);
+                div1.appendChild(bar); 
+            }
+
+            if (index >= half) {
+                div2.appendChild(checkbox);
+                div2.appendChild(label);
+                div2.appendChild(bar); 
+            }
+
+            controllersGrid.appendChild(div1)
+            controllersGrid.appendChild(div2)
+            
+        }  
+
+        var versionGrid = document.querySelector('.version');
+        var div3 = document.createElement("div");
+        var div4 = document.createElement("div");
+        var div3Text = document.createElement('p');
+        var div4Text = document.createElement('p');
+        div3.textContent = 'Choose the base version:'
+        div4.textContent = 'Choose the upgraded version:'
+        div3.className = "avilableVersions"
+        div4.className = "avilableVersions"
+        div3.appendChild(div3Text)
+        div4.appendChild(div4Text)
+        div4.id = 'rightDiv'
+
+
+        var Verhalf = Math.round(buildVersionBy.length / 2)
+
+            for (let index = 0; index < buildVersionBy.length; index++) {
+                var versionInput = document.createElement("INPUT")
+                versionInput.setAttribute("type", "number")
+                versionInput.id = 'num' + buildVersionBy[index].id
+                versionInput.name = buildVersionBy[index].name
+                var verLabel =  document.createElement("label");
+                verLabel.setAttribute("for", buildVersionBy[index].name)
+                verLabel.textContent = buildVersionBy[index].name
+                var verBR = document.createElement('br')
+
+                if (index <= Verhalf) {
+                 div3.appendChild(verLabel)
+                 div3.appendChild(versionInput)
+                 div3.appendChild(verBR)
+                }
+
+                if (index >= Verhalf) {
+                 div4.appendChild(verLabel)
+                 div4.appendChild(versionInput)
+                 div4.appendChild(verBR)
+                }
+
+            } 
+
+            versionGrid.appendChild(div3)
+            versionGrid.appendChild(div4)
+
+}
+
+    buildHome();
+</script>
+
+    <script>
             var choosenFlows = [];    
             var choosenControllers = [];  
+            var choosenVersion = []
             var runType = 'normal'  
 
             function trigger(params) {
                 assertManualController(runType);
             }       
-
+            
             function assertManualController(runType) {
+
+                for (let index = 0; index < buildVersionBy.length; index++) {
+                    var myNumber = 'num' + [index]
+                    var fecthedNumber = document.getElementById(myNumber)
+                    choosenVersion[index] = fecthedNumber.value
+                }
+                
+                console.log(choosenVersion);
+
+
                 var trueCounter = 0
 
                 if (runType === 'normal') {
@@ -146,10 +303,11 @@
                     return; 
                 };  
                
-                buildQueryString(controllers,fileState);              
+                buildQueryString(controllers,fileState,choosenVersion);              
             };
 
-            function buildQueryString(controllers,fileState) {
+            function buildQueryString(controllers,fileState,choosenVersion) {
+                
                 var controllersQueryString = []
                 var controllersObject = [];
 
@@ -175,11 +333,6 @@
 
                 }
 
-
-
-
-
-
                 for (let index = 0; index < controllers.length; index++) {
                     var controllerName = "controller" + index
                     var paramName = '&' + controllerName + '=';
@@ -203,16 +356,40 @@
                     };
                 }
 
+                for (let index = 0; index < choosenVersion.length; index++) {
+                    var add = '&'
+                    var name = buildVersionBy[index].name
+                    var equalName = name.replace(':',index)
+                    var spaceName = equalName.replace(' ','')
+                    var readyName = spaceName + '='
+
+                    var verValue = choosenVersion[index]
+                    var verString = add + readyName + verValue
+
+                    
+
+                    if (index === 0) {
+                     var versionQueryString = verString
+                    }
+
+                    if (index > 0) {
+                         versionQueryString = versionQueryString + verString 
+                    }                   
+                }
+
+                console.log(versionQueryString);
+                
+                
                 // console.log(controllersURLQuery);
-                manualSend(controllersURLQuery,fileStateQueryString);
+                manualSend(controllersURLQuery,fileStateQueryString,versionQueryString);
             }
 
             
             var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
-            function manualSend(controllersURLQuery,fileStateQueryString) {
+            function manualSend(controllersURLQuery,fileStateQueryString,versionQueryString) {
                 console.log('Manual send started!');
-                var url = 'http://' + '10.4.20.21' + ':8080/mobile/commissioning/v1/manual' + '?' + controllersURLQuery + fileStateQueryString
+                var url = 'http://' + '10.4.20.33' + ':8080/mobile/commissioning/v1/manual' + '?' + controllersURLQuery + fileStateQueryString + versionQueryString
                 console.log(url);
                   
                 var xhr = new XMLHttpRequest();
@@ -220,8 +397,17 @@
                 xhr.send();
                 
                 console.log('Manual send finished!');
+
             }
 
+            function reset(params) {
+                var resetURL = 'http://10.4.20.33:8080/reset'
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", resetURL, true);
+                xhr.send();
+                
+                console.log('Reset has been sent!');
+            }
             
         </script>
 

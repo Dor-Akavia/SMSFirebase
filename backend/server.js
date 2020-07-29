@@ -22,6 +22,9 @@ urlObj[8] = '/mobile/commissioning/v1/keep_alive'
 urlObj[9] = '/mobile/commissioning/v1/device_identity_status'
 urlObj[10] = '/'
 urlObj[11] = '/web/v1/information'
+urlObj[12] = '/index'
+urlObj[13] = '/frontend/style.css'
+urlObj[14] = '/reset'
 
 var pathData;
 var value = null;
@@ -31,7 +34,8 @@ var status = dataScript.status;
 var identity = dataScript.identity;
 var progressCounter = 0
 var isExecuting = false;
-var software = dataScript.software;
+var baseSoftware = dataScript.baseSoftware;
+var upgradeSoftware = dataScript.upgradeSoftware;
 var fileState = dataScript.fileState;
 var controller_type = dataScript.controller_type;
 var ControllerConnected = dataScript.ControllerConnected;
@@ -72,7 +76,8 @@ function launchServer (data) {
           pathData !== urlObj[2] && pathData !== urlObj[3] &&
           pathData !== urlObj[4] && pathData !== urlObj[7] && uploadTest === false
           && pathData !== urlObj[8] && pathData !== urlObj[9] && pathData !== urlObj[10]
-          && pathData !== urlObj[11]){ // 404
+          && pathData !== urlObj[11] && pathData !== urlObj[12]
+          && pathData !== urlObj[13] && pathData !== urlObj[14]){ // 404
           res.writeHead(404, { 'Content-Type': 'application/json' })
           // console.log('404');
           res.end();   
@@ -177,17 +182,28 @@ function launchServer (data) {
         var search = queryString.extract(req.url)        
         var extractedQueryString = queryString.parse(search);
 
-        prepareExecute(extractedQueryString);
+        console.log(extractedQueryString);
+
+
+        prepareExecute(extractedQueryString,baseSoftware,upgradeSoftware);
         
         function prepareExecute(extractedQueryString) {
             console.log('Enter prepare execute function');
+
+            
             
           queryCounter = [
             {Id:0, name: "fileState0", value: extractedQueryString.fileState0},
             {Id:1, name: "fileState1", value: extractedQueryString.fileState1},
             {Id:2, name: "controller0", value: extractedQueryString.controller0},
             {Id:3, name: "controller1", value: extractedQueryString.controller1},
-            {Id:4, name: "controller2", value: extractedQueryString.controller2}
+            {Id:4, name: "controller2", value: extractedQueryString.controller2},
+            {Id:5, name: "major0", value: extractedQueryString.major0},
+            {Id:6, name: "minor1", value: extractedQueryString.minor1},
+            {Id:7, name: "build2", value: extractedQueryString.build2},
+            {Id:8, name: "major3", value: extractedQueryString.major3},
+            {Id:9, name: "minor4", value: extractedQueryString.minor4},
+            {Id:10, name: "build5", value: extractedQueryString.build5}
           ]
 
           for (let index = 0; index < queryCounter.length; index++) {
@@ -200,7 +216,8 @@ function launchServer (data) {
             return el != null;
           });
 
-
+          console.log(filtered);
+          
 
           var both = false;
           controller_type.splice(0,3)
@@ -209,18 +226,13 @@ function launchServer (data) {
             
                 if (filtered[index].Id === 0) {
                     fileState[0].fileType = filtered[index].value
-                    both = true;
-                    // dataScript.identity.isActivated = true;
-                    // actionType = 'writeIdentity'
-                    // DBScript.writeDB(actionType,status,identity)
-                    
+                    both = true;                    
                 }
 
                 if (filtered[index].Id === 1) {
 
                   if (both === false) {
                     fileState[0].fileType = filtered[index].value
-                    
                   }
 
                   if (both === true) {
@@ -253,12 +265,34 @@ function launchServer (data) {
                   controller_type.splice(2,0,filtered[index].value) 
 
                 }
-
+               
+                if (filtered[index].Id === 5) {
+                  baseSoftware.major = filtered[index].value 
+                }
+                if (filtered[index].Id === 6) {
+                  baseSoftware.minor = filtered[index].value
+                }
+                if (filtered[index].Id === 7) {
+                  baseSoftware.build = filtered[index].value
+                }
+                if (filtered[index].Id === 8) {
+                  upgradeSoftware.major = filtered[index].value
+                }
+                if (filtered[index].Id === 9) {
+                  upgradeSoftware.minor = filtered[index].value
+                }
+                if (filtered[index].Id === 10) {
+                  upgradeSoftware.build = filtered[index].value
+                }
               
           }
+
+          console.log(baseSoftware);
+          console.log(upgradeSoftware);
+          
           fileState[0].controllerType = controller_type[0]
           status.fileState = fileState
-          dataScript.buildControllers(software,controller_type,ControllerConnected);
+          dataScript.buildControllers(baseSoftware,controller_type,ControllerConnected);
           actionType = 'launch'
           DBScript.writeDB(actionType,status,identity)    
           
@@ -344,6 +378,49 @@ function launchServer (data) {
      });
     };
 
+     if (pathData === urlObj[12]) {
+      console.log('Index');
+
+      read.readFile('../frontend/index.html', function(err, data) {
+       if (err) throw err; // crash with actual error instead of assuming success
+       res.writeHead(200, {'Content-Type': 'text/html'});
+       res.write(data);
+       res.end()
+     });
+    };
+
+     if (pathData === urlObj[13]) {
+      console.log('the style has been loaded');
+
+      read.readFile('../frontend/style.css', function(err, data) {
+       if (err) throw err; // crash with actual error instead of assuming success
+       res.writeHead(200, {'Content-Type': 'text/html'});
+       res.write(data);
+       res.end()
+     });
+    };
+
+     if (pathData === urlObj[14]) {
+      console.log('Reset has been executed!');
+      actionType = 'launch'
+      baseSoftware = { major: 4, minor: 7, build: 0 };
+      upgradeSoftware = { major: 4, minor: 12, build: 0 };
+      controller_type = [0]
+      dataScript.buildControllers(baseSoftware,controller_type,ControllerConnected);
+      status.totalTime = 100
+      status.totalProgress = 0
+      status.fileState = {}
+      identity.isActivated = false
+      console.log(status);
+      console.log(identity);
+      
+      DBScript.writeDB(actionType,status,identity)   
+       res.writeHead(200, {'Content-Type': 'application/json'});
+       res.end()
+     
+    };
+
+
     //////////////////////////////////
     //////////////////////////////////
 
@@ -407,9 +484,10 @@ function progress(params) {
         isExecuting = false;
         identity.isActivated = true;
         progressCounter = 0;
-        software = { major: 4, minor: 12, build: 1412};
         ControllerConnected = true;
-        dataScript.buildControllers(software, controller_type, ControllerConnected);
+        console.log(upgradeSoftware);
+        
+        dataScript.buildControllers(upgradeSoftware, controller_type, ControllerConnected);
     };
   };
 
@@ -428,9 +506,8 @@ function progress(params) {
       isExecuting = false;
       fullFlow = false;
       progressCounter = 0;
-      software = { major: 4, minor: 12, build: 1412};
       ControllerConnected = true;
-      dataScript.buildControllers(software, controller_type, ControllerConnected);
+      dataScript.buildControllers(upgradeSoftware, controller_type, ControllerConnected);
       identity.isActivated = true;
 
   };

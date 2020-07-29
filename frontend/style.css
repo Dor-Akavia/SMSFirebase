@@ -40,7 +40,7 @@ button {
     color: white;
 }
 
-.avilableControllers, .avilableFlows {
+.avilableControllers, .avilableFlows, .avilableVersions {
     visibility: visible;
     margin-top: 10px;
     font-size: 20px;
@@ -50,4 +50,19 @@ button {
     display: inline-block;
     vertical-align: top;
 }
+
+#rightDiv {
+    padding-left: 20px;
+}
+
+#num2, #num5 {
+    margin-left: 5px;
+}
+
+#num1, #num4 {
+    margin-left: -2px;
+}
+
+
+
 
