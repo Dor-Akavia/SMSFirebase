@@ -13,14 +13,14 @@ status.totalProgress=0;
 var identity = []
 identity.controllers ={};
 identity.batteries= {};
-identity.isActivated= false;
+identity.isActivated= true;
 identity.isReady= true;
 identity.homeUrl = '/';
 identity.statusUrl = '/#/commissioning/status';
 identity.viewOnlyUrl =  '/mode/view_only';
 identity.serialNumber = '500FF004-53'
 
-var baseSoftware = { major: 4, minor: 7, build: 0 };
+var baseSoftware = { major: 4, minor: 11, build: 0 };
 var upgradeSoftware = { major: 4, minor: 12, build: 0 };
 
 var controller_type = [0]

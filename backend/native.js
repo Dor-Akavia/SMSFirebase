@@ -1,13 +1,60 @@
+import {GeneralTypesProto} from './ProtoManager';
 
-var window = global;
+const QR_TO_GTYPES_PRODUCT = Object.freeze(
+    {
+        "0": GeneralTypesProto.ProductType.WIFI_GATEWAY,
+        "1": GeneralTypesProto.ProductType.WIFI_REPEATER,
+        // "2": eneralTypesProto.ProductType.,
+        // "3": eneralTypesProto.ProductType.,
+        "4": GeneralTypesProto.ProductType.EVSE_SA
+    }
+);
+
+const SOLAREDGE_APPS = Object.freeze(
+    {
+        SETAPP: "setapp",
+        MYSE: "mysolaredge"
+    }
+);
+
+const MOBILE_TO_WEB_LANGUAGE_CODES =
+{
+    /* Supported languages */
+    'en_US': 'en-US',           // English, United States
+    'de_DE': 'de-DE',           // German
+    'es_ES': 'es-MX',           // Spanish, Mexico
+    'fr_FR': 'fr-FR',           // French
+    'it_IT': 'it-IT',           // Italian
+    'nl_NL': 'nl-NL',           // Dutch
+    'ja_JP': 'ja-JP',           // Japanese
+    'ko_KR': 'ko-KR',           // Korean
+    'zh_CN': 'zh-TW',           // Chinese, Traditional
+    'pt_BR': 'pt-BR',           // Portuguese, Brazilian
+    'pl_PL': 'pl-PL',           // Polish
+    'hu_HU': 'hu-HU',           // Hungarian
+    'sv_SE': 'sv-SE',           // Swedish
+
+    /* Unsupported languages - defaults back to 'en-US' */
+    'en_GB': 'en-US',           // English (GB)
+    'en_AU': 'en-US',           // English (AU)
+    'da_DK': 'en-US',           // Danish (Denmark)
+    'cs_CZ': 'en-US',           // ÄeÅ¡tina (Czech Republic)
+    'tr_TR': 'en-US',           // TÃ¼rkÃ§e (TÃ¼rk)
+}
+
 const ANDROID = "Android";
 const IOS = "webkit";
 
+class MobileApi{
+    static isIos(){
+        return window.webkit !== undefined;
+    }
 
+    static isAndroid(){
+        return window.Android !== undefined;
+    }
 
-
-
-    function hasApi(api_function, log_error = true){
+    static hasApi(api_function, log_error = true){
         if (window.Android !== undefined && window.Android[api_function] !== undefined){
             return ANDROID;
         }
@@ -20,7 +67,7 @@ const IOS = "webkit";
         return false;
     }
 
-    function runApi(api_function, api_args){
+    static runApi(api_function, api_args){
         let mobile_platform = this.hasApi(api_function);
 
         // log print
@@ -55,11 +102,11 @@ const IOS = "webkit";
     }
 
     /* General APIs */
-    function has_webLog(){
+    static has_webLog(){
         return this.hasApi("SETAPP_webLog", false);
     }
 
-    function webLog(log_msg, console_log = true){
+    static webLog(log_msg, console_log = true){
         let mobile_platform = this.has_webLog();
         if (console_log) console.log(log_msg);
 
@@ -76,108 +123,112 @@ const IOS = "webkit";
         }
     }
 
-    function has_webIsReady(){
+    static has_webIsReady(){
         return this.hasApi("SETAPP_webIsReady");
     }
 
-    function webIsReady(){
+    static webIsReady(){
         return this.runApi("SETAPP_webIsReady");
     }
 
-    function has_showWeb(){
+    static has_showWeb(){
         return this.hasApi("SETAPP_showWeb");
     }
 
-    function showWeb(){
+    static showWeb(){
         return this.runApi("SETAPP_showWeb");
     }
 
-    function has_deviceInit(){
+    static has_deviceInit(){
         return this.hasApi("SETAPP_deviceInit");
     }
 
-    function deviceInit(json_args){
+    static deviceInit(json_args){
         return this.runApi("SETAPP_deviceInit", json_args);
     }
 
     /* My Solaredge APIs */
-    function has_finishedCommWizard(){
+    static has_finishedCommWizard(){
         return this.hasApi("SETAPP_finishedCommWizard");
     }
 
-    function finishedCommWizard(){
+    static finishedCommWizard(){
         return this.runApi("SETAPP_finishedCommWizard");
     }
 
-    function has_backToDashboard(){
+    static has_backToDashboard(){
         return this.hasApi("SETAPP_backToDashboard");
     }
 
-    function backToDashboard(){
+    static backToDashboard(){
         return this.runApi("SETAPP_backToDashboard");
     }
 
     /* Wireless gateway APIs */
-    function has_scanHg(){
+    static has_scanHg(){
         return this.hasApi("SETAPP_scanHg");
     }
 
-    function scanHg(json_args){
+    static scanHg(json_args){
         return this.runApi("SETAPP_scanHg", json_args);
     }
 
-    function has_scanHgRepeaters(){
+    static has_scanHgRepeaters(){
         return this.hasApi("SETAPP_scanHgRepeaters");
     }
 
-    function scanHgRepeaters(json_args){
+    static scanHgRepeaters(json_args){
         return this.runApi("SETAPP_scanHgRepeaters", json_args);
     }
 
-    function has_webHgIsReady(){
+    static has_webHgIsReady(){
         return this.hasApi("SETAPP_webHgIsReady");
     }
 
-    function webHgIsReady(){
+    static webHgIsReady(){
         return this.runApi("SETAPP_webHgIsReady");
     }
 
     /* Side Menu Items */ 
-    function has_openSupport(){
+    static has_openSupport(){
         return this.hasApi("SETAPP_openSupport");
     }
 
-    function openSupport(){
+    static openSupport(){
         return this.runApi("SETAPP_openSupport");
     }
     
-    function has_sendLogs(){
+    static has_sendLogs(){
         return this.hasApi("SETAPP_sendLogs");
     }
 
-    function sendLogs(){
+    static sendLogs(){
         return this.runApi("SETAPP_sendLogs");
     }
 
 
-    function has_goToOnlineSupport(){
+    static has_goToOnlineSupport(){
         return this.hasApi("SETAPP_goToOnlineSupport");
     }
 
-    function goToOnlineSupport(){
+    static goToOnlineSupport(){
         return this.runApi("SETAPP_goToOnlineSupport");
     }
 
-    function has_startCentralCommScanning(){
+    static has_startCentralCommScanning(){
         return this.hasApi("SETAPP_startCentralCommScanning");
     }
 
-    function startCentralCommScanning(protoMsg){
+    static startCentralCommScanning(protoMsg){
         let ser_msg = Object.values(protoMsg.serializeBinary())
         this.webLog(`msg: ${ser_msg}`)
         return this.runApi("SETAPP_startCentralCommScanning", ser_msg);
     }
+}
 
-
-exports.isIos = isIos;
-exports.isAndroid = isAndroid;
+export {
+    MobileApi,
+    QR_TO_GTYPES_PRODUCT,
+    SOLAREDGE_APPS,
+    MOBILE_TO_WEB_LANGUAGE_CODES
+}

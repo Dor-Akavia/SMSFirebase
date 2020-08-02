@@ -29,113 +29,100 @@
 
 
     <script>
+    var page = document.querySelector('.page');
+    var platform = null
+    var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+    if (/android/i.test(userAgent)) {
+        platform = 'Android'
+    }
+    if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        platform = 'iOS' 
+    }
+
     
     var functions = [
         {name:'SETAPP_openSupport'},
         {name:'SETAPP_goToOnlineSupport'},
         {name:'SETAPP_sendLogs'},
         {name:'SETAPP_deviceInit'},
-        {name:'SETAPP_startCentralCommScanning'},
+        // {name:'SETAPP_startCentralCommScanning'},
         {name:'SETAPP_apIpChange'}
-]
+    ]
 
-    var page = document.querySelector('.page');
+
+    function SETAPP_openSupport(params) {
+        if (platform === 'Android') {
+            window.Android.SETAPP_openSupport('SETAPP_openSupport');
+        }
+        if (platform === 'iOS') {
+            window.webkit.messageHandlers.SETAPP_openSupport.postMessage('SETAPP_openSupport')
+        }
+    }
+
+    function SETAPP_goToOnlineSupport(params) {
+        if (platform === 'Android') {
+            window.Android.SETAPP_goToOnlineSupport('SETAPP_goToOnlineSupport');
+        }
+        if (platform === 'iOS') {
+            window.webkit.messageHandlers.SETAPP_goToOnlineSupport.postMessage('SETAPP_goToOnlineSupport')
+        }
+    }
+
+    function SETAPP_sendLogs(params) {
+        if (platform === 'Android') {
+            window.Android.SETAPP_sendLogs('SETAPP_sendLogs');
+        }
+        if (platform === 'iOS') {
+            window.webkit.messageHandlers.SETAPP_sendLogs.postMessage('SETAPP_sendLogs')
+        }
+
+    }
+
+    function SETAPP_deviceInit(params) {
+        if (platform === 'Android') {
+            window.Android.SETAPP_deviceInit('SETAPP_deviceInit');
+        }
+        if (platform === 'iOS') {
+            window.webkit.messageHandlers.SETAPP_deviceInit.postMessage('SETAPP_deviceInit')
+        }
+    }
+    
+    function SETAPP_apIpChange(params) {
+        if (platform === 'Android') {
+            window.Android.SETAPP_apIpChange('SETAPP_apIpChange');
+        }
+        if (platform === 'iOS') {
+            window.webkit.messageHandlers.SETAPP_apIpChange.postMessage('SETAPP_apIpChange')
+        }
+    }
+
+
     
     for (let index = 0; index < functions.length; index++) {
         var optionButton = document.createElement('button')
         var br1 = document.createElement('br')
         var br2 = document.createElement('br')
         optionButton.textContent = functions[index].name
-        optionButton.setAttribute("onclick", 'assertClick(' + JSON.stringify(functions[index].name) + ')')
+        optionButton.setAttribute("onclick", functions[index].name + '()' )    
         page.appendChild(optionButton);
         page.appendChild(br1);
         page.appendChild(br2);
     }
 
-    var platform = null
-
-    function showWeb(){
-
-        var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-        if (/android/i.test(userAgent)) {
-            platform = 'Android'
-        }
-
-        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-        platform = 'iOS'
-         
-        }
-        
-
+    function showWeb() {
         if (platform === 'Android') {
-            console.log('Android view');
-            
-            window.Android.SETAPP_showWeb();
+            window.Android.SETAPP_showWeb('SETAPP_showWeb');
         }
-
         if (platform === 'iOS') {
-            console.log('iOS view');
-            
-            window.webkit.messageHandlers.SETAPP_showWeb();
-        }
+            window.webkit.messageHandlers.SETAPP_showWeb.postMessage('SETAPP_showWeb')
 
+        }
     }
 
-        // ->  Commissioning_CentralCommissioning() 
+    // ->  Commissioning_CentralCommissioning() 
     showWeb();
-
-    // function assertClick(selection) {        
-
-    //         if (isAndroid === true && selection === functions[0].name) {              
-    //             window.Android.SETAPP_openSupport();
-                
-    //         }
-
-    //         if (isIos === true && selection === functions[0].name) {
-    //             window.webkit.messageHandlers.SETAPP_openSupport();
-    //         }
-    //         if (isAndroid === true && selection === functions[1].name) {
-    //             window.Android.SETAPP_goToOnlineSupport();
-    //         }
-
-    //         if (isIos === true && selection === functions[1].name) {
-    //             window.webkit.messageHandlers.SETAPP_goToOnlineSupport();
-    //         }
-    //         if (isAndroid === true && selection === functions[2].name) {
-    //             window.Android.SETAPP_sendLogs();
-    //         }
-
-    //         if (isIos === true && selection === functions[2].name) {
-    //             window.webkit.messageHandlers.SETAPP_sendLogs();
-    //         }
-    //         if (isAndroid === true && selection === functions[3].name) {
-    //             window.Android.SETAPP_deviceInit();
-    //         }
-
-    //         if (isIos === true && selection === functions[3].name) {
-    //             window.webkit.messageHandlers.SETAPP_deviceInit();
-    //         }
-    //         if (isAndroid === true && selection === functions[4].name) {
-    //             window.Android.SETAPP_startCentralCommScanning();
-    //         }
-
-    //         if (isIos === true && selection === functions[4].name) {
-    //             window.webkit.messageHandlers.SETAPP_startCentralCommScanning();
-    //         }
-    //         if (isAndroid === true && selection === functions[5].name) {
-    //             window.Android.SETAPP_apIpChange();
-    //         }
-
-    //         if (isIos === true && selection === functions[5].name) {
-    //             window.webkit.messageHandlers.SETAPP_apIpChange();
-    //         }
-
-
-        
-
-    // }
-    </script>
+</script>
 </body>
 </html>
 

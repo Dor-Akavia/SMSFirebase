@@ -413,6 +413,8 @@ function launchServer (data) {
       identity.isActivated = false
       console.log(status);
       console.log(identity);
+      actionType = 'launch'
+      DBScript.writeDB(actionType,status,identity)  
       
       DBScript.writeDB(actionType,status,identity)   
        res.writeHead(200, {'Content-Type': 'application/json'});

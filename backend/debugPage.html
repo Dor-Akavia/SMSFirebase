@@ -6,7 +6,7 @@
         <link rel="stylesheet" href="../frontend/style.css">
 
 </head>
-<body style="background-color: blue;">
+<body id="body">
 
     <div class="version" style="display: ;">
         <p>Choose version:</p>
@@ -15,48 +15,10 @@
 
     <script>
         
-    var versionGrid = document.querySelector('.version');
-    var div3 = document.createElement("div");
-    var div4 = document.createElement("div");
-    div3.className = "avilableVersions"
-    div4.className = "avilableVersions"
+        webView.evaluateJavaScript("document.getElementById('body').innerText")
+        print(result)
+    
 
-    var buildVersionBy = [
-        {name:'major: ',placeHolder:4, id:0},
-        {name:'minor: ',placeHolder:7, id:1},
-        {name:'build: ',placeHolder:12, id:2},
-        {name:'major: ',placeHolder:4, id:3},
-        {name:'minor: ',placeHolder:7, id:4},
-        {name:'build: ',placeHolder:12, id:5},
-    ]
-        var Verhalf = Math.round(buildVersionBy.length / 2)
-
-            for (let index = 0; index < buildVersionBy.length; index++) {
-                var versionInput = document.createElement("INPUT")
-                versionInput.setAttribute("type", "number")
-                versionInput.id = buildVersionBy[index].id
-                versionInput.name = buildVersionBy[index].name
-                var verLabel =  document.createElement("label");
-                verLabel.setAttribute("for", buildVersionBy[index].name)
-                verLabel.textContent = buildVersionBy[index].name
-                var verBR = document.createElement('br')
-
-                if (index <= Verhalf) {
-                 div3.appendChild(verLabel)
-                 div3.appendChild(versionInput)
-                 div3.appendChild(verBR)
-                }
-
-                if (index >= Verhalf) {
-                 div4.appendChild(verLabel)
-                 div4.appendChild(versionInput)
-                 div4.appendChild(verBR)
-                }
-
-            } 
-
-            versionGrid.appendChild(div3)
-            versionGrid.appendChild(div4)
     
 
 
